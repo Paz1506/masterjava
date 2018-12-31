@@ -43,6 +43,18 @@
         <xs:complexType>
             <xs:sequence>
                 <xs:element type="xs:string" name="fullName"/>
+                <xs:element name="groups">
+                    <xs:complexType>
+                        <xs:sequence>
+                            <!-- Каждый элемент - ссылка на соответствующую группу-->
+                            <xs:element name="group" maxOccurs="unbounded">
+                                <xs:complexType>
+                                    <xs:attribute type="xs:IDREF" name="group" use="required"/>
+                                </xs:complexType>
+                            </xs:element>
+                        </xs:sequence>
+                    </xs:complexType>
+                </xs:element>
             </xs:sequence>
             <xs:attribute type="xs:string" name="email"/>
             <xs:attribute type="flagType" name="flag" use="required"/>
@@ -79,9 +91,7 @@
 
     <xs:element name="Group">
         <xs:complexType>
-            <xs:sequence>
-                <xs:element type="xs:string" name="name"/>
-            </xs:sequence>
+            <xs:attribute type="xs:ID" name="name"/>
             <xs:attribute type="groupType" name="groupType" use="required"/>
             <xs:attribute type="xs:IDREF" name="project" use="required"/>
         </xs:complexType>

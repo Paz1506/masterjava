@@ -4,12 +4,23 @@
     <Users>
         <User flag="active" city="kiv" email="gmail@gmail.com">
             <fullName>Full Name</fullName>
+            <groups>
+                <group group="topjava07"/>
+            </groups>
         </User>
         <User flag="superuser" city="spb" email="admin@javaops.ru">
             <fullName>Admin</fullName>
+            <groups>
+                <group group="topjava07"/>
+                <group group="topjava08"/>
+                <group group="masterjava01"/>
+            </groups>
         </User>
         <User flag="deleted" city="spb" email="mail@yandex.ru">
             <fullName>Deleted</fullName>
+            <groups>
+                <group group="topjava08"/>
+            </groups>
         </User>
     </Users>
     <Cities>
@@ -22,15 +33,11 @@
         <Project name="masterjava">second project mj</Project>
     </Projects>
     <Groups>
-        <Group groupType="current" project="topjava">
-            <name>topjava01</name>
-        </Group>
-        <Group groupType="current" project="topjava">
-            <name>topjava02</name>
-        </Group>
-        <Group groupType="current" project="masterjava">
-            <name>master01</name>
-        </Group>
+        <Group groupType="current" project="topjava" name="topjava01"/>
+        <Group groupType="current" project="topjava" name="topjava02"/>
+        <Group groupType="current" project="topjava" name="topjava07"/>
+        <Group groupType="current" project="topjava" name="topjava08"/>
+        <Group groupType="current" project="masterjava" name="masterjava01"/>
     </Groups>
 
 </Payload>
