@@ -21,14 +21,19 @@
         <City id="mnsk">Минск</City>
     </Cities>
     <Projects>
-        <Project>
-            <name>topjava</name>
-            <description>first project tj</description>
-        </Project>
-        <Project>
-            <name>masterjava</name>
-            <description>second project mj</description>
-        </Project>
+        <Project name="topjava">first project tj</Project>
+        <Project name="masterjava">second project mj</Project>
     </Projects>
+    <Groups>
+        <Group groupType="current" project="topjava">
+            <name>topjava01</name>
+        </Group>
+        <Group groupType="current" project="topjava">
+            <name>topjava02</name>
+        </Group>
+        <Group groupType="current" project="masterjava">
+            <name>master01</name>
+        </Group>
+    </Groups>
 
 </Payload>
