@@ -10,9 +10,13 @@ import com.google.common.io.Resources;
 import ru.javaops.masterjava.xml.schema.*;
 import ru.javaops.masterjava.xml.util.JaxbParser;
 import ru.javaops.masterjava.xml.util.Schemas;
+import ru.javaops.masterjava.xml.util.StaxStreamProcessor;
 
 import javax.xml.bind.JAXBException;
+import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.XMLStreamReader;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -26,8 +30,10 @@ public class MainXml {
         JAXB_PARSER.setSchema(Schemas.ofClasspath("payload.xsd"));
     }
 
-    public static void main(String[] args) throws IOException, JAXBException {
+    public static void main(String[] args) throws IOException, JAXBException, XMLStreamException {
         getUsersOfProjects("topjava");
+
+        getUsersOfProjectsStax("topjava");
     }
 
     private static void getUsersOfProjects(String projectName) throws IOException, JAXBException {
@@ -66,7 +72,50 @@ public class MainXml {
         }
 
         System.out.println("result = " + result.size());
+    }
 
-//        List<User> userList = payload.getUsers().getUser().stream().filter(user -> user.getGroups().getGroup()).collect(Collectors.toList());
+    private static void getUsersOfProjectsStax(String projectName) throws IOException, XMLStreamException {
+        String name;
+        String email;
+
+        try (StaxStreamProcessor processor =
+                     new StaxStreamProcessor(Resources.getResource("payload.xml").openStream())) {
+            XMLStreamReader reader = processor.getReader();
+
+            //Вывести все города
+            String city;
+            while ((city = processor.getElementValue("City")) != null) {
+                System.out.println(city);
+            }
+
+        }
+
+        try (StaxStreamProcessor processor =
+                     new StaxStreamProcessor(Resources.getResource("payload.xml").openStream())) {
+            XMLStreamReader reader = processor.getReader();
+
+            //Вывести все емейлы пользователей
+            String userEmail;
+            String fullName;
+            String group;
+            List<String> userGroups = new ArrayList<>();
+            while ((userEmail = processor.getElementAttributeValue("User", 2)) != null) {
+                fullName = processor.getElementValue("fullName");
+
+//                group = processor.getElementAttributeValue("group", 0);
+
+                System.out.println("==== user ====");
+                System.out.println(userEmail);
+                System.out.println(fullName);
+//                System.out.println(group);
+
+
+                while (!processor.endElement("groups")) {
+                    group = processor.getElementAttributeValue("group", 0);
+                    System.out.println(group);
+                }
+            }
+
+        }
     }
 }
