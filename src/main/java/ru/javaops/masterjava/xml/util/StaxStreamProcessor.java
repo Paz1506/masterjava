@@ -51,6 +51,7 @@ public class StaxStreamProcessor implements AutoCloseable {
     public boolean endElement(String element) throws XMLStreamException {
         int event = reader.next();
         if (event == XMLEvent.END_ELEMENT && reader.getLocalName().equalsIgnoreCase(element)){
+            System.out.println("сработало!");
             return true;
         }
         return false;

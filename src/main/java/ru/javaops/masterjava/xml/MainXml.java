@@ -15,6 +15,7 @@ import ru.javaops.masterjava.xml.util.StaxStreamProcessor;
 import javax.xml.bind.JAXBException;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
+import javax.xml.stream.events.XMLEvent;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -78,17 +79,17 @@ public class MainXml {
         String name;
         String email;
 
-        try (StaxStreamProcessor processor =
-                     new StaxStreamProcessor(Resources.getResource("payload.xml").openStream())) {
-            XMLStreamReader reader = processor.getReader();
-
-            //Вывести все города
-            String city;
-            while ((city = processor.getElementValue("City")) != null) {
-                System.out.println(city);
-            }
-
-        }
+//        try (StaxStreamProcessor processor =
+//                     new StaxStreamProcessor(Resources.getResource("payload.xml").openStream())) {
+//            XMLStreamReader reader = processor.getReader();
+//
+//            //Вывести все города
+//            String city;
+//            while ((city = processor.getElementValue("City")) != null) {
+//                System.out.println(city);
+//            }
+//
+//        }
 
         try (StaxStreamProcessor processor =
                      new StaxStreamProcessor(Resources.getResource("payload.xml").openStream())) {
@@ -109,11 +110,12 @@ public class MainXml {
                 System.out.println(fullName);
 //                System.out.println(group);
 
-
-                while (!processor.endElement("groups")) {
-                    group = processor.getElementAttributeValue("group", 0);
-                    System.out.println(group);
+                String gr;
+                while ((gr = processor.getElementAttributeValue("group", 0)) != null) {
+                    System.out.println(gr);
+                    if (processor.endElement("group") && processor.endElement("groups")) break;
                 }
+
             }
 
         }
