@@ -47,7 +47,7 @@
                     <xs:complexType>
                         <xs:sequence>
                             <!-- Каждый элемент - ссылка на соответствующую группу-->
-                            <xs:element name="group" maxOccurs="unbounded">
+                            <xs:element name="group"  maxOccurs="unbounded">
                                 <xs:complexType>
                                     <xs:attribute type="xs:IDREF" name="group" use="required"/>
                                 </xs:complexType>
@@ -79,6 +79,7 @@
             </xs:extension>
         </xs:simpleContent>
     </xs:complexType>
+
     <xs:element name="Project">
         <xs:complexType>
             <xs:simpleContent>
