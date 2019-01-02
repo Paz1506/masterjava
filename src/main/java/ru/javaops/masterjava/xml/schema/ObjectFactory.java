@@ -34,6 +34,14 @@ public class ObjectFactory {
     }
 
     /**
+     * Create an instance of {@link User }
+     * 
+     */
+    public User createUser() {
+        return new User();
+    }
+
+    /**
      * Create an instance of {@link Payload }
      * 
      */
@@ -42,11 +50,27 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link User }
+     * Create an instance of {@link User.Groups }
      * 
      */
-    public User createUser() {
-        return new User();
+    public User.Groups createUserGroups() {
+        return new User.Groups();
+    }
+
+    /**
+     * Create an instance of {@link Project }
+     * 
+     */
+    public Project createProject() {
+        return new Project();
+    }
+
+    /**
+     * Create an instance of {@link ru.javaops.masterjava.xml.schema.Group }
+     * 
+     */
+    public ru.javaops.masterjava.xml.schema.Group createGroup() {
+        return new ru.javaops.masterjava.xml.schema.Group();
     }
 
     /**
@@ -66,11 +90,35 @@ public class ObjectFactory {
     }
 
     /**
+     * Create an instance of {@link Payload.Projects }
+     * 
+     */
+    public Payload.Projects createPayloadProjects() {
+        return new Payload.Projects();
+    }
+
+    /**
+     * Create an instance of {@link Payload.Groups }
+     * 
+     */
+    public Payload.Groups createPayloadGroups() {
+        return new Payload.Groups();
+    }
+
+    /**
      * Create an instance of {@link CityType }
      * 
      */
     public CityType createCityType() {
         return new CityType();
+    }
+
+    /**
+     * Create an instance of {@link User.Groups.Group }
+     * 
+     */
+    public User.Groups.Group createUserGroupsGroup() {
+        return new User.Groups.Group();
     }
 
     /**
