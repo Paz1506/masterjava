@@ -35,8 +35,17 @@ public class UserProcessor {
     }
 
     //HW 04 1.
-    public int insertUsers(List<User> users) {
-        DBIProvider.getDBI().useTransaction((conn, status) -> users.forEach(user -> dao.insert(user)));
-        return 1;
+//    public int insertUsers(List<User> users) {
+//        DBIProvider.getDBI().useTransaction((conn, status) -> users.forEach(user -> dao.insert(user)));
+//        return 1;
+//    }
+
+    //default chunk size == 5
+    public void insertBatch(List<User> users, Integer chunkSize) {
+        if (chunkSize == null) {
+            chunkSize = 5;
+        }
+        Integer finalChunkSize = chunkSize;
+        DBIProvider.getDBI().useTransaction((conn, status) -> dao.insertBatch(users, finalChunkSize));
     }
 }
