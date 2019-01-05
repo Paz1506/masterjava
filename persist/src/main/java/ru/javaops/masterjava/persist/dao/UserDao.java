@@ -33,7 +33,9 @@ public abstract class UserDao implements AbstractDao {
     @SqlUpdate("INSERT INTO users (id, full_name, email, flag) VALUES (:id, :fullName, :email, CAST(:flag AS user_flag)) ")
     abstract void insertWitId(@BindBean User user);
 
-    @SqlBatch("INSERT INTO users (full_name, email, flag) VALUES (:fullName, :email, CAST(:flag AS user_flag)) ")
+    @SqlBatch("INSERT INTO users (full_name, email, flag) " +
+              "VALUES (:fullName, :email, CAST(:flag AS user_flag)) " +
+              "ON CONFLICT ON CONSTRAINT user_email_idx DO NOTHING; ")
 //    @GetGeneratedKeys
     abstract int[] insertGeneratedIdBatch(@BindBean Iterator<User> userIterator, @BatchChunkSize int chunkSize);
 
