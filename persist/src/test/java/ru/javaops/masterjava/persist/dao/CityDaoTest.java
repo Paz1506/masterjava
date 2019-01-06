@@ -9,6 +9,7 @@ import ru.javaops.masterjava.persist.model.City;
 
 import java.util.List;
 
+import static ru.javaops.masterjava.persist.CityTestData.CITY4;
 import static ru.javaops.masterjava.persist.CityTestData.FIRST4_CITIES;
 
 public class CityDaoTest extends AbstractDaoTest<CityDao> {
@@ -31,6 +32,12 @@ public class CityDaoTest extends AbstractDaoTest<CityDao> {
     public void getWithLimit() {
         List<City> cities = dao.getWithLimit(4);
         Assert.assertEquals(FIRST4_CITIES, cities);
+    }
+
+    @Test
+    public void getWithShortcut() {
+        City city = dao.getWithShortcut("spb");
+        Assert.assertEquals(CITY4, city);
     }
 
     @Test
