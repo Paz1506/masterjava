@@ -1,6 +1,7 @@
 package ru.javaops.masterjava.persist.dao;
 
 import com.bertoncelj.jdbi.entitymapper.EntityMapperFactory;
+import one.util.streamex.IntStreamEx;
 import org.skife.jdbi.v2.sqlobject.*;
 import org.skife.jdbi.v2.sqlobject.customizers.BatchChunkSize;
 import org.skife.jdbi.v2.sqlobject.customizers.RegisterMapperFactory;
@@ -53,11 +54,11 @@ public abstract class CityDao implements AbstractDao {
     public abstract int[] insertBatch(@BindBean List<City> cities, @BatchChunkSize int chunkSize);
 
 
-//    public List<String> insertAndGetConflictEmails(List<City> users) {
-//        int[] result = insertBatch(users, users.size());
-//        return IntStreamEx.range(0, users.size())
-//                          .filter(i -> result[i] == 0)
-//                          .mapToObj(index -> users.get(index).getEmail())
-//                          .toList();
-//    }
+    public List<String> insertAndGetConflictEmails(List<City> cities) {
+        int[] result = insertBatch(cities, cities.size());
+        return IntStreamEx.range(0, cities.size())
+                          .filter(i -> result[i] == 0)
+                          .mapToObj(index -> cities.get(index).getName())
+                          .toList();
+    }
 }

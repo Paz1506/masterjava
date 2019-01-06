@@ -24,6 +24,7 @@ public class UploadServlet extends HttpServlet {
     private static final int CHUNK_SIZE = 2000;
 
     private final UserProcessor userProcessor = new UserProcessor();
+    private final CityProcessor cityProcessor = new CityProcessor();
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
@@ -41,12 +42,15 @@ public class UploadServlet extends HttpServlet {
                 message = "Chunk Size must be > 1";
             } else {
                 Part filePart = req.getPart("fileToUpload");
-                try (InputStream is = filePart.getInputStream()) {
+                try (InputStream is = filePart.getInputStream();
+                     InputStream isCities = filePart.getInputStream()) {
                     List<UserProcessor.FailedEmails> failed = userProcessor.process(is, chunkSize);
+                    List<CityProcessor.FailedNames> failedCities = cityProcessor.process(isCities, chunkSize);
                     log.info("Failed users: " + failed);
                     final WebContext webContext =
                             new WebContext(req, resp, req.getServletContext(), req.getLocale(),
                                     ImmutableMap.of("users", failed));
+                    webContext.setVariable("cities", failedCities);
                     engine.process("result", webContext, resp.getWriter());
                     return;
                 }

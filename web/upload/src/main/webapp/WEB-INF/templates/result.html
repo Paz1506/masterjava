@@ -10,5 +10,11 @@
     <!--/*@thymesVar id="users" type="java.util.List<ru.javaops.masterjava.upload.UserProcessor.FailedMails>"*/-->
     <li th:each="user: ${users}" th:text="${user}"></li>
 </ul>
+
+<h3>Failed cities</h3>
+<ul>
+    <!--/*@thymesVar id="cities" type="java.util.List<ru.javaops.masterjava.upload.CityProcessor.FailedNames>"*/-->
+    <li th:each="city: ${cities}" th:text="${city}"></li>
+</ul>
 </body>
 </html>
