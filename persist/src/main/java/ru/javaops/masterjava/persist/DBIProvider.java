@@ -1,9 +1,11 @@
 package ru.javaops.masterjava.persist;
 
+import com.typesafe.config.Config;
 import lombok.extern.slf4j.Slf4j;
 import org.skife.jdbi.v2.DBI;
 import org.skife.jdbi.v2.logging.SLF4JLog;
 import org.skife.jdbi.v2.tweak.ConnectionFactory;
+import ru.javaops.masterjava.config.Configs;
 import ru.javaops.masterjava.persist.dao.AbstractDao;
 
 import javax.naming.InitialContext;
@@ -18,7 +20,7 @@ public class DBIProvider {
         static final DBI jDBI;
 
         static {
-            final DBI dbi;
+            DBI dbi;
             if (connectionFactory != null) {
                 log.info("Init jDBI with  connectionFactory");
                 dbi = new DBI(connectionFactory);
@@ -28,7 +30,12 @@ public class DBIProvider {
                     InitialContext ctx = new InitialContext();
                     dbi = new DBI((DataSource) ctx.lookup("java:/comp/env/jdbc/masterjava"));
                 } catch (Exception ex) {
-                    throw new IllegalStateException("PostgreSQL initialization failed", ex);
+//                    throw new IllegalStateException("PostgreSQL initialization failed", ex);
+
+                    Config db = Configs.getConfig("persist.conf", "db");
+
+                    dbi = new DBI(db.getString("url"), db.getString("user"), db.getString("password"));
+
                 }
             }
             jDBI = dbi;
@@ -47,4 +54,5 @@ public class DBIProvider {
     public static <T extends AbstractDao> T getDao(Class<T> daoClass) {
         return DBIHolder.jDBI.onDemand(daoClass);
     }
+
 }
