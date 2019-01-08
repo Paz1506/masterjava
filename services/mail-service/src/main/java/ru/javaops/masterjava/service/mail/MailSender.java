@@ -13,19 +13,19 @@ import java.util.List;
 @Slf4j
 public class MailSender {
 
+    private static Email email = new SimpleEmail();
+    private static Config emailConfig = Configs.getConfig("mail.conf", "mail");
+    private static String host = emailConfig.getString("host");
+    private static Integer port = emailConfig.getInt("port");
+    private static String username = emailConfig.getString("username");
+    private static String password = emailConfig.getString("password");
+    private static Boolean useSSL = emailConfig.getBoolean("useSSL");
+    private static Boolean useTLS = emailConfig.getBoolean("useTLS");
+    private static Boolean debug = emailConfig.getBoolean("debug");
+    private static String fromName = emailConfig.getString("fromName");
+
     static void sendMail(List<Addressee> to, List<Addressee> cc, String subject, String body) {
         log.info("Send mail to \'" + to + "\' cc \'" + cc + "\' subject \'" + subject + (log.isDebugEnabled() ? "\nbody=" + body : ""));
-
-        Email email = new SimpleEmail();
-        Config emailConfig = Configs.getConfig("mail.conf", "mail");
-        String host = emailConfig.getString("host");
-        Integer port = emailConfig.getInt("port");
-        String username = emailConfig.getString("username");
-        String password = emailConfig.getString("password");
-        Boolean useSSL = emailConfig.getBoolean("useSSL");
-        Boolean useTLS = emailConfig.getBoolean("useTLS");
-        Boolean debug = emailConfig.getBoolean("debug");
-        String fromName = emailConfig.getString("fromName");
 
         try {
             email.setHostName(host);
