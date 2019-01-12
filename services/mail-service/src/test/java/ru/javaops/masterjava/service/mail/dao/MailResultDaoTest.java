@@ -1,15 +1,16 @@
-package ru.javaops.masterjava.persist.dao;
+package ru.javaops.masterjava.service.mail.dao;
 
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import ru.javaops.masterjava.persist.MailResultTestData;
-import ru.javaops.masterjava.persist.model.MailResult;
+import ru.javaops.masterjava.service.mail.MailResultTestData;
+import ru.javaops.masterjava.service.mail.model.MailResult;
 
 import java.util.List;
 
-import static ru.javaops.masterjava.persist.MailResultTestData.FIRST3_RESULT_LIST;
+import static ru.javaops.masterjava.service.mail.MailResultTestData.FIRST3_RESULT_LIST;
+
 
 public class MailResultDaoTest extends AbstractDaoTest<MailResultDao> {
 

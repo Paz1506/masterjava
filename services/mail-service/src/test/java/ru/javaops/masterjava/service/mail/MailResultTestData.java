@@ -1,8 +1,9 @@
-package ru.javaops.masterjava.persist;
+package ru.javaops.masterjava.service.mail;
 
 import com.google.common.collect.ImmutableList;
-import ru.javaops.masterjava.persist.dao.MailResultDao;
-import ru.javaops.masterjava.persist.model.MailResult;
+import ru.javaops.masterjava.persist.DBIProvider;
+import ru.javaops.masterjava.service.mail.dao.MailResultDao;
+import ru.javaops.masterjava.service.mail.model.MailResult;
 
 import java.util.Date;
 import java.util.List;

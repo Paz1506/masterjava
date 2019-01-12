@@ -1,6 +1,7 @@
-package ru.javaops.masterjava.persist.model;
+package ru.javaops.masterjava.service.mail.model;
 
 import lombok.*;
+import ru.javaops.masterjava.persist.model.BaseEntity;
 
 import java.util.Date;
 
