@@ -21,14 +21,12 @@ public class GroupProcessor {
         val newGroups = new ArrayList<Group>();
 
         while (processor.startElement("Group", "Project")) {
-            System.out.println("Нашли группу!!!");
             val name = processor.getAttribute("name");
             val type = GroupType.valueOf((processor.getAttribute("type")));
             if (!map.containsKey(name)) {
                 newGroups.add(new Group(name, type, projectId));
             }
         }
-        System.out.println("Groups size!: " + newGroups.size());
 
         newGroups.forEach(g -> {
             log.info("Insert group " + g);

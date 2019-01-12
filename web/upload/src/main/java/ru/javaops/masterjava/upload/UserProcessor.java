@@ -54,7 +54,7 @@ public class UserProcessor {
         while (processor.doUntil(XMLEvent.START_ELEMENT, "User")) {
             String cityRef = processor.getAttribute("city");  // unmarshal doesn't get city ref
             String rawGroupRefs = processor.getAttribute("groupRefs");
-            System.out.println("GROUP REFS: " + rawGroupRefs);
+            log.info("Group refs of current users: " + rawGroupRefs);
             String[] groupRefs = null;
             if (rawGroupRefs != null && rawGroupRefs.length() > 0) {
                 groupRefs = processor.getAttribute("groupRefs").split(" ");  // unmarshal doesn't get group ref
@@ -75,7 +75,7 @@ public class UserProcessor {
                         continue usersLoop;
                     } else {
                         List<Integer> idsUserGroup = userGroup.get(user);
-                        System.out.println("!!!ID тек группы: " + currentGroup.getId());
+                        log.info("Current processed group id = " + currentGroup.getId());
                         if (idsUserGroup == null || !idsUserGroup.contains(currentGroup.getId())) {
                             if (idsUserGroup == null) {
                                 idsUserGroup = new ArrayList<>();
@@ -108,7 +108,7 @@ public class UserProcessor {
                         List<UserGroup> userGroupList = new ArrayList<>();
                         l.forEach(groupId -> userGroupList.add(new UserGroup(u.getId(), groupId)));
                         userGroupDao.insertBatch(userGroupList);
-                        System.out.println("!! Добавлено связей юзер - группа: " + userGroupList.size());
+                        System.out.println("Count added relations user - groups = " + userGroupList.size());
                     }
                 });
                 log.info("{} successfully executed with already presents: {}", emailRange, alreadyPresentsInChunk);
