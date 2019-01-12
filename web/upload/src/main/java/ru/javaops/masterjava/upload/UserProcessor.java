@@ -3,9 +3,13 @@ package ru.javaops.masterjava.upload;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import ru.javaops.masterjava.persist.DBIProvider;
+import ru.javaops.masterjava.persist.dao.GroupDao;
 import ru.javaops.masterjava.persist.dao.UserDao;
+import ru.javaops.masterjava.persist.dao.UserGroupDao;
 import ru.javaops.masterjava.persist.model.City;
+import ru.javaops.masterjava.persist.model.Group;
 import ru.javaops.masterjava.persist.model.User;
+import ru.javaops.masterjava.persist.model.UserGroup;
 import ru.javaops.masterjava.persist.model.type.UserFlag;
 import ru.javaops.masterjava.upload.PayloadProcessor.FailedEmails;
 import ru.javaops.masterjava.xml.schema.ObjectFactory;
@@ -15,10 +19,7 @@ import ru.javaops.masterjava.xml.util.StaxStreamProcessor;
 import javax.xml.bind.JAXBException;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.events.XMLEvent;
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -30,6 +31,8 @@ public class UserProcessor {
 
     private static final JaxbParser jaxbParser = new JaxbParser(ObjectFactory.class);
     private static UserDao userDao = DBIProvider.getDao(UserDao.class);
+    private static GroupDao groupDao = DBIProvider.getDao(GroupDao.class);
+    private static UserGroupDao userGroupDao = DBIProvider.getDao(UserGroupDao.class);
 
     private ExecutorService executorService = Executors.newFixedThreadPool(NUMBER_THREADS);
 
@@ -45,14 +48,44 @@ public class UserProcessor {
         List<User> chunk = new ArrayList<>(chunkSize);
         val unmarshaller = jaxbParser.createUnmarshaller();
         List<FailedEmails> failed = new ArrayList<>();
+        Map<User, List<Integer>> userGroup = new HashMap<>();
 
+        usersLoop:
         while (processor.doUntil(XMLEvent.START_ELEMENT, "User")) {
             String cityRef = processor.getAttribute("city");  // unmarshal doesn't get city ref
+            String rawGroupRefs = processor.getAttribute("groupRefs");
+            System.out.println("GROUP REFS: " + rawGroupRefs);
+            String[] groupRefs = null;
+            if (rawGroupRefs != null && rawGroupRefs.length() > 0) {
+                groupRefs = processor.getAttribute("groupRefs").split(" ");  // unmarshal doesn't get group ref
+            } else {
+                continue usersLoop;
+            }
             ru.javaops.masterjava.xml.schema.User xmlUser = unmarshaller.unmarshal(processor.getReader(), ru.javaops.masterjava.xml.schema.User.class);
             if (cities.get(cityRef) == null) {
                 failed.add(new FailedEmails(xmlUser.getEmail(), "City '" + cityRef + "' is not present in DB"));
             } else {
+
                 final User user = new User(id++, xmlUser.getValue(), xmlUser.getEmail(), UserFlag.valueOf(xmlUser.getFlag().value()), cityRef);
+
+                for (String group : groupRefs) {
+                    Group currentGroup = groupDao.getByName(group);
+                    if (currentGroup == null) {
+                        failed.add(new FailedEmails(xmlUser.getEmail(), "Group '" + group + "' is not present in DB"));
+                        continue usersLoop;
+                    } else {
+                        List<Integer> idsUserGroup = userGroup.get(user);
+                        System.out.println("!!!ID тек группы: " + currentGroup.getId());
+                        if (idsUserGroup == null || !idsUserGroup.contains(currentGroup.getId())) {
+                            if (idsUserGroup == null) {
+                                idsUserGroup = new ArrayList<>();
+                            }
+                            idsUserGroup.add(currentGroup.getId());
+                            userGroup.put(user, idsUserGroup);
+                        }
+                    }
+                }
+
                 chunk.add(user);
                 if (chunk.size() == chunkSize) {
                     addChunkFutures(chunkFutures, chunk);
@@ -70,6 +103,14 @@ public class UserProcessor {
         chunkFutures.forEach((emailRange, future) -> {
             try {
                 List<String> alreadyPresentsInChunk = future.get();
+                userGroup.forEach((u, l) -> {
+                    if (!alreadyPresentsInChunk.contains(u.getEmail())) {
+                        List<UserGroup> userGroupList = new ArrayList<>();
+                        l.forEach(groupId -> userGroupList.add(new UserGroup(u.getId(), groupId)));
+                        userGroupDao.insertBatch(userGroupList);
+                        System.out.println("!! Добавлено связей юзер - группа: " + userGroupList.size());
+                    }
+                });
                 log.info("{} successfully executed with already presents: {}", emailRange, alreadyPresentsInChunk);
                 allAlreadyPresents.addAll(alreadyPresentsInChunk);
             } catch (InterruptedException | ExecutionException e) {

@@ -33,4 +33,11 @@ public class GroupDaoTest extends AbstractDaoTest<GroupDao> {
         assertEquals(GROUPS, projects);
         System.out.println(projects.values());
     }
+
+    @Test
+    public void getByName() throws Exception {
+        Group group = dao.getByName("masterjava01");
+        assertEquals(GroupTestData.MASTERJAVA_01, group);
+        System.out.println(group);
+    }
 }
