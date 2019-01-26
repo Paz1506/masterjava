@@ -1,5 +1,6 @@
 package ru.javaops.masterjava.service.mail;
 
+import lombok.extern.slf4j.Slf4j;
 import one.util.streamex.StreamEx;
 
 import java.util.ArrayList;
@@ -7,8 +8,8 @@ import java.util.List;
 import java.util.Set;
 import java.util.concurrent.*;
 
+@Slf4j
 public class MailServiceExecutor {
-    private static final String OK = "OK";
 
     private static final String INTERRUPTED_BY_FAULTS_NUMBER = "+++ Interrupted by faults number";
     private static final String INTERRUPTED_BY_TIMEOUT = "+++ Interrupted by timeout";
@@ -20,8 +21,8 @@ public class MailServiceExecutor {
         final CompletionService<MailResult> completionService = new ExecutorCompletionService<>(mailExecutor);
 
         List<Future<MailResult>> futures = StreamEx.of(addressees)
-                                                   .map(addressee -> completionService.submit(() -> MailSender.sendTo(addressee, subject, body)))
-                                                   .toList();
+                .map(addressee -> completionService.submit(() -> MailSender.sendTo(addressee, subject, body)))
+                .toList();
 
         return new Callable<GroupResult>() {
             private int success = 0;
@@ -51,29 +52,9 @@ public class MailServiceExecutor {
                         return cancelWithFail(INTERRUPTED_EXCEPTION);
                     }
                 }
-/*
-                for (Future<MailResult> future : futures) {
-                    MailResult mailResult;
-                    try {
-                        mailResult = future.get(10, TimeUnit.SECONDS);
-                    } catch (InterruptedException e) {
-                        return cancelWithFail(INTERRUPTED_EXCEPTION);
-                    } catch (ExecutionException e) {
-                        return cancelWithFail(e.getCause().toString());
-                    } catch (TimeoutException e) {
-                        return cancelWithFail(INTERRUPTED_BY_TIMEOUT);
-                    }
-                    if (mailResult.isOk()) {
-                        success++;
-                    } else {
-                        failed.add(mailResult);
-                        if (failed.size() >= 5) {
-                            return cancelWithFail(INTERRUPTED_BY_FAULTS_NUMBER);
-                        }
-                    }
-                }
-*/
-                return new GroupResult(success, failed, null);
+                GroupResult groupResult = new GroupResult(success, failed, null);
+                log.info("groupResult: {}", groupResult);
+                return groupResult;
             }
 
             private GroupResult cancelWithFail(String cause) {
@@ -82,61 +63,4 @@ public class MailServiceExecutor {
             }
         }.call();
     }
-
-    // dummy realization
-//    public MailResult sendToUser(String template, String email) throws Exception {
-//        try {
-//            Thread.sleep(500);  //delay
-//        } catch (InterruptedException e) {
-//            // log cancel;
-//            return null;
-//        }
-//        return Math.random() < 0.7 ? MailResult.ok(email) : MailResult.error(email, "Error");
-//    }
-//
-//    public static class MailResult {
-//        private final String email;
-//        private final String result;
-//
-//        private static MailResult ok(String email) {
-//            return new MailResult(email, OK);
-//        }
-//
-//        private static MailResult error(String email, String error) {
-//            return new MailResult(email, error);
-//        }
-//
-//        public boolean isOk() {
-//            return OK.equals(result);
-//        }
-//
-//        private MailResult(String email, String cause) {
-//            this.email = email;
-//            this.result = cause;
-//        }
-//
-//        @Override
-//        public String toString() {
-//            return '(' + email + ',' + result + ')';
-//        }
-//    }
-
-//    public static class GroupResult {
-//        private final int success; // number of successfully sent email
-//        private final List<MailResult> failed; // failed emails with causes
-//        private final String failedCause;  // global fail cause
-//
-//        public GroupResult(int success, List<MailResult> failed, String failedCause) {
-//            this.success = success;
-//            this.failed = failed;
-//            this.failedCause = failedCause;
-//        }
-//
-//        @Override
-//        public String toString() {
-//            return "Success: " + success + '\n' +
-//                    "Failed: " + failed.toString() + '\n' +
-//                    (failedCause == null ? "" : "Failed cause" + failedCause);
-//        }
-//    }
 }

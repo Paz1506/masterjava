@@ -17,7 +17,7 @@ import java.util.concurrent.TimeUnit;
 @OutputTimeUnit(TimeUnit.MILLISECONDS)
 @State(Scope.Benchmark)
 @Threads(1)
-@Fork(1)
+@Fork(10)
 @Timeout(time = 5, timeUnit = TimeUnit.MINUTES)
 public class MatrixBenchmark {
 
