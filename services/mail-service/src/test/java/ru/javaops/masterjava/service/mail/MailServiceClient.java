@@ -15,7 +15,12 @@ public class MailServiceClient {
                 new QName("http://mail.javaops.ru/", "MailServiceImplService"));
 
         MailService mailService = service.getPort(MailService.class);
+        // групповая
         mailService.sendToGroup(ImmutableSet.of(
-                new Addressee("masterjava@javaops.ru", null)), null, "Subject", "Body");
+                new Addressee("paz1506@mail.ru", "name")), null, "Subject", "Body");
+
+        // пакетная
+        mailService.sendBulk(ImmutableSet.of(
+                new Addressee("paz1506@mail.ru", "name")), "SubjectBulk", "Body");
     }
 }

@@ -5,7 +5,7 @@ import com.google.common.collect.ImmutableSet;
 public class MailWSClientMain {
     public static void main(String[] args) {
         MailWSClient.sendToGroup(
-                ImmutableSet.of(new Addressee("To <masterjava@javaops.ru>")),
-                ImmutableSet.of(new Addressee("Copy <masterjava@javaops.ru>")), "Subject", "Body");
+                ImmutableSet.of(new Addressee("To <Paz1506@mail.ru>")),
+                ImmutableSet.of(new Addressee("Copy <Paz1506@gmail.com>")), "Subject", "Body");
     }
 }
