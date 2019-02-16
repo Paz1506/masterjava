@@ -1,10 +1,7 @@
 package ru.javaops.masterjava.service.mail;
 
 import com.typesafe.config.Config;
-import org.apache.commons.mail.DefaultAuthenticator;
-import org.apache.commons.mail.Email;
-import org.apache.commons.mail.EmailException;
-import org.apache.commons.mail.HtmlEmail;
+import org.apache.commons.mail.*;
 import ru.javaops.masterjava.config.Configs;
 
 import javax.mail.Authenticator;
@@ -47,6 +44,7 @@ public class MailConfig {
         email.setDebug(debug);
         email.setAuthenticator(auth);
         email.setCharset(StandardCharsets.UTF_8.name());
+
         return email;
     }
 
@@ -54,14 +52,19 @@ public class MailConfig {
         return INSTANCE.prepareEmail(new HtmlEmail());
     }
 
+    // Email with attachments
+    public static MultiPartEmail createMultipartEmail() throws EmailException {
+        return INSTANCE.prepareEmail(new MultiPartEmail());
+    }
+
     @Override
     public String toString() {
         return "\nhost='" + host + '\'' +
-                "\nport=" + port +
-                "\nuseSSL=" + useSSL +
-                "\nuseTLS=" + useTLS +
-                "\ndebug=" + debug +
-                "\nusername='" + username + '\'' +
-                "\nfromName='" + fromName + '\'';
+               "\nport=" + port +
+               "\nuseSSL=" + useSSL +
+               "\nuseTLS=" + useTLS +
+               "\ndebug=" + debug +
+               "\nusername='" + username + '\'' +
+               "\nfromName='" + fromName + '\'';
     }
 }

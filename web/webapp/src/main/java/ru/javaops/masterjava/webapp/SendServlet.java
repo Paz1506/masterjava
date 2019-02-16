@@ -1,6 +1,7 @@
 package ru.javaops.masterjava.webapp;
 
 import lombok.extern.slf4j.Slf4j;
+import org.thymeleaf.util.StringUtils;
 import ru.javaops.masterjava.service.mail.GroupResult;
 import ru.javaops.masterjava.service.mail.MailWSClient;
 
@@ -24,8 +25,18 @@ public class SendServlet extends HttpServlet {
             String users = req.getParameter("users");
             String subject = req.getParameter("subject");
             String body = req.getParameter("body");
-            GroupResult groupResult = MailWSClient.sendBulk(MailWSClient.split(users), subject, body);
-            result = groupResult.toString();
+            GroupResult groupResult;
+            String attachResult;
+            //attachment
+            String attachPath = req.getParameter("attachPath");
+            if (!StringUtils.isEmptyOrWhitespace(attachPath)) {
+                attachResult = MailWSClient.sendAttach(MailWSClient.split(users), subject, body, attachPath);
+                result = attachResult;
+            } else {
+                groupResult = MailWSClient.sendBulk(MailWSClient.split(users), subject, body);
+                result = groupResult.toString();
+            }
+
             log.info("Processing finished with result: {}", result);
         } catch (Exception e) {
             log.error("Processing failed", e);

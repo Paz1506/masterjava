@@ -41,6 +41,7 @@
     </p>
     <p>
         <button type="button" onclick="send()">Send</button>
+        <input id="attachPath" type="file">
     </p>
     <pre id="result"></pre>
 </section>
@@ -51,7 +52,7 @@
             return this.value;
         }).get();
 //        https://stackoverflow.com/a/22213543/548473
-        $.post("send", "users=" + users + "&subject=" + $("#subject").val() + "&body=" + $("#body").val())
+        $.post("send", "users=" + users + "&subject=" + $("#subject").val() + "&body=" + $("#body").val() + "&attachPath=" + document.getElementById("attachPath").files[0].path)
             .done(function (result) {
                 $('#result').html(result);
             })

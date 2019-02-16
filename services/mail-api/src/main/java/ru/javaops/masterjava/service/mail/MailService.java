@@ -27,4 +27,11 @@ public interface MailService {
             @WebParam(name = "subject") String subject,
             @WebParam(name = "body") String body) throws WebStateException;
 
+    @WebMethod
+    String sendAttach(
+            @WebParam(name = "to") Set<Addressee> to,
+            @WebParam(name = "subject") String subject,
+            @WebParam(name = "body") String body,
+            @WebParam(name = "attachPath") String attachPath) throws WebStateException;
+
 }

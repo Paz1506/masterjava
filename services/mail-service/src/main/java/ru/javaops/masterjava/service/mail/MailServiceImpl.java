@@ -17,4 +17,9 @@ public class MailServiceImpl implements MailService {
     public GroupResult sendBulk(Set<Addressee> to, String subject, String body) throws WebStateException {
         return MailServiceExecutor.sendBulk(to, subject, body);
     }
+
+    @Override
+    public String sendAttach(Set<Addressee> to, String subject, String body, String attachPath) throws WebStateException {
+        return MailSender.sendAttach(to, subject, body, attachPath);
+    }
 }

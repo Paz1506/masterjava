@@ -17,12 +17,11 @@ public class MailWSClient {
 
     static {
         WS_CLIENT = new WsClient<>(Resources.getResource("wsdl/mailService.wsdl"),
-                new QName("http://mail.javaops.ru/", "MailServiceImplService"),
-                MailService.class);
+                                   new QName("http://mail.javaops.ru/", "MailServiceImplService"),
+                                   MailService.class);
 
         WS_CLIENT.init("mail", "/mail/mailService?wsdl");
     }
-
 
     public static String sendToGroup(final Set<Addressee> to, final Set<Addressee> cc, final String subject, final String body) throws WebStateException {
         log.info("Send to group to '" + to + "' cc '" + cc + "' subject '" + subject + (log.isDebugEnabled() ? "\nbody=" + body : ""));
@@ -35,6 +34,13 @@ public class MailWSClient {
         log.info("Send bulk to '" + to + "' subject '" + subject + (log.isDebugEnabled() ? "\nbody=" + body : ""));
         GroupResult result = WS_CLIENT.getPort().sendBulk(to, subject, body);
         log.info("Sent bulk with result: " + result);
+        return result;
+    }
+
+    public static String sendAttach(final Set<Addressee> to, final String subject, final String body, final String attachPath) throws WebStateException {
+        log.info("Send attach to '" + to + "' subject '" + subject + (log.isDebugEnabled() ? "\nbody=" + body : ""));
+        String result = WS_CLIENT.getPort().sendAttach(to, subject, body, attachPath);
+        log.info("Sent attach with result: " + result);
         return result;
     }
 
