@@ -4,8 +4,10 @@ import com.google.common.base.Splitter;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
 import com.google.common.io.Resources;
+import com.typesafe.config.Config;
 import lombok.extern.slf4j.Slf4j;
 import org.slf4j.event.Level;
+import ru.javaops.masterjava.config.Configs;
 import ru.javaops.masterjava.web.AuthUtil;
 import ru.javaops.masterjava.web.WebStateException;
 import ru.javaops.masterjava.web.WsClient;
@@ -21,9 +23,10 @@ public class MailWSClient {
     private static final WsClient<MailService> WS_CLIENT;
     public static final String USER = "user";
     public static final String PASSWORD = "password";
-    private static final SoapLoggingHandlers.ClientHandler LOGGING_HANDLER = new SoapLoggingHandlers.ClientHandler(Level.DEBUG);
+    private static Config config = Configs.getConfig("hosts.conf", "hosts.mail");
+    private static final SoapLoggingHandlers.ClientHandler LOGGING_HANDLER = new SoapLoggingHandlers.ClientHandler(Level.valueOf(config.getString("debug.client")));
 
-    public static String AUTH_HEADER = AuthUtil.encodeBasicAuthHeader(USER, PASSWORD);
+
 
     static {
         WS_CLIENT = new WsClient<>(Resources.getResource("wsdl/mailService.wsdl"),

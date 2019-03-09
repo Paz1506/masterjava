@@ -1,7 +1,9 @@
 package ru.javaops.masterjava.web.handler;
 
 import com.sun.xml.ws.api.handler.MessageHandlerContext;
+import com.typesafe.config.Config;
 import lombok.extern.slf4j.Slf4j;
+import ru.javaops.masterjava.config.Configs;
 import ru.javaops.masterjava.web.AuthUtil;
 import ru.javaops.masterjava.web.Statistics;
 
@@ -20,6 +22,8 @@ import static com.google.common.net.HttpHeaders.AUTHORIZATION;
 //public class SoapServerSecurityHandler implements SOAPHandler<SOAPMessageContext> { //work
 public class SoapServerSecurityHandler extends SoapBaseHandler {
 
+    private Config config = Configs.getConfig("hosts.conf", "hosts.mail");
+
     @Override
     public boolean handleMessage(MessageHandlerContext context) {
         checkAuth(context, Statistics.RESULT.SUCCESS);
@@ -35,7 +39,7 @@ public class SoapServerSecurityHandler extends SoapBaseHandler {
     private void checkAuth(MessageHandlerContext context, Statistics.RESULT result) {
         Map<String, List<String>> headers = (Map<String, List<String>>) context.get(MessageContext.HTTP_REQUEST_HEADERS);
 
-        int code = AuthUtil.checkBasicAuth(headers, AuthUtil.encodeBasicAuthHeader("user", "password"));
+        int code = AuthUtil.checkBasicAuth(headers, AuthUtil.encodeBasicAuthHeader(config.getString("user"), config.getString("password")));
         if (code != 0) {
             context.put(MessageContext.HTTP_RESPONSE_CODE, code);
             throw new SecurityException();
