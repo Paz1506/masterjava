@@ -7,10 +7,13 @@ import com.sun.xml.ws.api.message.Message;
 import com.sun.xml.ws.api.streaming.XMLStreamWriterFactory;
 import lombok.extern.slf4j.Slf4j;
 import org.slf4j.event.Level;
+import ru.javaops.masterjava.web.Statistics;
 
+import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamWriter;
 import java.io.ByteArrayOutputStream;
 import java.nio.charset.StandardCharsets;
+import java.time.LocalTime;
 import java.util.EnumMap;
 import java.util.Map;
 
@@ -35,7 +38,7 @@ public abstract class SoapLoggingHandlers extends SoapBaseHandler {
 
     private static final Map<Level, HANDLER> HANDLER_MAP = new EnumMap<Level, HANDLER>(Level.class) {
         {
-            put(Level.TRACE, HANDLER.DEBUG);
+            put(Level.TRACE, HANDLER.STAT);
             put(Level.DEBUG, HANDLER.DEBUG);
             put(Level.INFO, HANDLER.INFO);
             put(Level.WARN, HANDLER.ERROR);
@@ -74,6 +77,20 @@ public abstract class SoapLoggingHandlers extends SoapBaseHandler {
             public void handleMessage(MessageHandlerContext context, boolean isRequest) {
                 ERROR.handleMessage(context, isRequest);
                 log.info((isRequest ? "SOAP request: " : "SOAP response: ") + context.getMessage().getPayloadLocalPart());
+            }
+        },
+        STAT {
+            public void handleFault(MessageHandlerContext context) {
+                logging(context, null, Statistics.RESULT.FAIL);
+            }
+
+            public void handleMessage(MessageHandlerContext context, boolean isRequest) {
+                logging(context, isRequest, Statistics.RESULT.SUCCESS);
+            }
+
+            private void logging(MessageHandlerContext context, Boolean isRequest, Statistics.RESULT result) {
+                log.info(((isRequest != null && isRequest) ? "SOAP request stat: " : "SOAP response stat: "));
+                Statistics.count(context.getMessage().getPayloadLocalPart(), System.currentTimeMillis(), result);
             }
         },
         DEBUG {
@@ -133,6 +150,18 @@ public abstract class SoapLoggingHandlers extends SoapBaseHandler {
 
         public ServerHandler() {
             super(Level.INFO);
+        }
+
+        @Override
+        protected boolean isRequest(boolean isOutbound) {
+            return !isOutbound;
+        }
+    }
+
+    public static class StatusticsHandler extends SoapLoggingHandlers {
+
+        public StatusticsHandler() {
+            super(Level.TRACE);
         }
 
         @Override
