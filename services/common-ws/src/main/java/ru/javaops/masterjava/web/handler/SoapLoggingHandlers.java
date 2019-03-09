@@ -1,6 +1,7 @@
 package ru.javaops.masterjava.web.handler;
 
 
+import com.sun.net.httpserver.HttpExchange;
 import com.sun.xml.txw2.output.IndentingXMLStreamWriter;
 import com.sun.xml.ws.api.handler.MessageHandlerContext;
 import com.sun.xml.ws.api.message.Message;
@@ -90,6 +91,7 @@ public abstract class SoapLoggingHandlers extends SoapBaseHandler {
 
             private void logging(MessageHandlerContext context, Boolean isRequest, Statistics.RESULT result) {
                 log.info(((isRequest != null && isRequest) ? "SOAP request stat: " : "SOAP response stat: "));
+                HttpExchange httpExchange = (HttpExchange) context.get("com.sun.xml.ws.http.exchange");
                 Statistics.count(context.getMessage().getPayloadLocalPart(), System.currentTimeMillis(), result);
             }
         },

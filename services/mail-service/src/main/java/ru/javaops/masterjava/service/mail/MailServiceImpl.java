@@ -31,11 +31,11 @@ public class MailServiceImpl implements MailService {
 //        HttpServletRequest request = (HttpServletRequest) mCtx.get(MessageContext.SERVLET_REQUEST);
 //        HttpServletResponse response = (HttpServletResponse) mCtx.get(MessageContext.SERVLET_RESPONSE);
 
-        int code = AuthUtil.checkBasicAuth(headers, MailWSClient.AUTH_HEADER);
-        if (code != 0) {
-            mCtx.put(MessageContext.HTTP_RESPONSE_CODE, code);
-            throw new SecurityException();
-        }
+//        int code = AuthUtil.checkBasicAuth(headers, MailWSClient.AUTH_HEADER);
+//        if (code != 0) {
+//            mCtx.put(MessageContext.HTTP_RESPONSE_CODE, code);
+//            throw new SecurityException();
+//        }
         return MailSender.sendToGroup(to, cc, subject, body, attachments);
     }
 
