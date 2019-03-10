@@ -7,7 +7,7 @@
     <security-constraint>
         <web-resource-collection>
             <web-resource-name>mailService</web-resource-name>
-            <url-pattern>/mailService</url-pattern>
+            <url-pattern>/mail/mailService</url-pattern>
         </web-resource-collection>
         <auth-constraint>
             <role-name>tomcat</role-name>
