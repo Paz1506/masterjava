@@ -1,12 +1,17 @@
 package ru.javaops.masterjava.service.mail.listeners;
 
 import lombok.extern.slf4j.Slf4j;
+import ru.javaops.masterjava.service.mail.MailObject;
+import ru.javaops.masterjava.service.mail.MailServiceExecutor;
+import ru.javaops.masterjava.service.mail.MailWSClient;
 
 import javax.jms.*;
 import javax.naming.InitialContext;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 import javax.servlet.annotation.WebListener;
+import java.io.Serializable;
+import java.util.Collections;
 
 @WebListener
 @Slf4j
@@ -29,13 +34,20 @@ public class JmsMailListener implements ServletContextListener {
             listenerThread = new Thread(() -> {
                 try {
                     while (!Thread.interrupted()) {
-                        Message m = receiver.receive();
+                        ObjectMessage m = (ObjectMessage) receiver.receive();
                         // TODO implement mail sending
-                        if (m instanceof TextMessage) {
-                            TextMessage tm = (TextMessage) m;
-                            String text = tm.getText();
-                            log.info("Received TextMessage with text '{}'", text);
-                        }
+                        MailObject object = (MailObject) m.getObject();
+
+                        MailServiceExecutor.sendBulk(MailWSClient.split(object.getUsers()), object.getSubject(), object.getBody(), Collections.emptyList());
+
+                        log.info("Received ObjectMessage with users= '{}'", object.getUsers());
+
+
+//                        if (m instanceof TextMessage) {
+//                            TextMessage tm = (TextMessage) m;
+//                            String text = tm.getText();
+//                            log.info("Received TextMessage with text '{}'", text);
+//                        }
                     }
                 } catch (Exception e) {
                     log.error("Receiving messages failed: " + e.getMessage(), e);

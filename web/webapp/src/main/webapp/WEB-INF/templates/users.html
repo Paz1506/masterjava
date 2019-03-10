@@ -85,7 +85,7 @@
                 contentType: false,
                 processData: false
             };
-        } else if (transport === "REST" || transport === "JMS") {
+        } else if (transport === "REST") {
 
             var data = new FormData();
             data.append('users', users);
@@ -102,6 +102,13 @@
                 data: data,
                 contentType: false,
                 processData: false
+            };
+        } else if (transport === "JMS"){
+            param = {
+                url: "sendJms",
+                data: "users=" + users + "&subject=" + $("#subject").val() + "&body=" + $("#body").val(),
+                contentType: "application/x-www-form-urlencoded"
+
             };
         }
 
